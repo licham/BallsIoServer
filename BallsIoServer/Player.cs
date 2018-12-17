@@ -1,23 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using SocketLibrary;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BallsIoServer
 {
     public class Player
     {
-        public List<Circle> Circles { get; } = new List<Circle>();
+        private readonly ConnectedSocket _socket;
 
-        public int Id { get; }
+        public List<Circle> Circles { get; } = new List<Circle>();
 
         public Point MoveDirection { get; set; }
 
-        public Player(int id, Point moveDirection = null, List<Circle> circles = null)
+        public Player(ConnectedSocket socket, Point moveDirection = null, List<Circle> circles = null)
         {
-            Id = id;
+            _socket = socket;
+            Task.Factory.StartNew(() =>
+            {
+                string message = socket.Receive();
+                string[] newCoords = message.Split(' ');
+                MoveDirection = new Point(double.Parse(newCoords[0]), double.Parse(newCoords[1]));
+            });
             MoveDirection = moveDirection ?? new Point();
             if (circles != null)
-            {
                 circles.ForEach(x => Circles.Add(x));
-            }
         }
     }
 }

@@ -4,17 +4,20 @@ namespace BallsIoServer
 {
     public class GameState
     {
+        private int _feedsCount => (int)FieldSize.Length();
+
+        private readonly List<Circle> _feeds = new List<Circle>();
+
         public List<Player> Players { get; } = new List<Player>();
 
         public Point FieldSize { get; }
 
         public GameState(Point fieldSize, List<Player> players = null)
         {
-            FieldSize = fieldSize;
+            FieldSize = fieldSize;          
             if (players != null)
-            {
                 players.ForEach(x => Players.Add(x));
-            }
+            GenerateFeeds();
         }
 
         public void UpdateState()
@@ -37,23 +40,39 @@ namespace BallsIoServer
                         if (player == otherPlayer)
                             return;
 
-                        otherPlayer.Circles.ForEach(otherCircle =>
-                        {
-                            Point direction = (otherCircle.Position - circle.Position).Normalize();
-                            Point firstPoint = circle.Position + direction * circle.Score;
-                            Point secondPoint = otherCircle.Position + direction * otherCircle.Score;
-                            Point thirdPoint = firstPoint - otherCircle.Position;
-                            if (thirdPoint.Length() > secondPoint.Length())
-                            {
-                                circle.Score += otherCircle.Score;
-                                otherCircle.Score = 0;
-                            }
-                        });
+                        otherPlayer.Circles.ForEach(otherCircle => ProcessConcatenation(circle, otherCircle));
                         otherPlayer.Circles.RemoveAll(otherCircle => otherCircle.Score == 0);
                     });
+                    _feeds.ForEach(feed => ProcessConcatenation(circle, feed));
+                    _feeds.RemoveAll(feed => feed.Score == 0);
                 });
             });
             Players.RemoveAll(player => player.Circles.Count == 0);
+            GenerateFeeds();
+        }
+
+        private void ProcessConcatenation(Circle one, Circle other)
+        {
+            Point direction = (other.Position - one.Position).Normalize();
+            Point firstPoint = one.Position + direction * one.Score;
+            Point secondPoint = other.Position + direction * other.Score;
+            Point thirdPoint = firstPoint - other.Position;
+            if (thirdPoint.Length() > secondPoint.Length())
+            {
+                one.Score += other.Score;
+                other.Score = 0;
+            }
+        }
+
+        private void GenerateFeeds()
+        {
+            for (int i = 0; i < _feedsCount - _feeds.Count; i++)
+            {
+                var random = new System.Random(System.DateTime.Now.Millisecond);
+                var x = random.Next((int)FieldSize.X);
+                var y = random.Next((int)FieldSize.Y);
+                _feeds.Add(new Circle(new Point(x, y)));
+            }
         }
     }
 }

@@ -6,7 +6,7 @@
 
         public int Score { get; set; }
 
-        public Circle(Point position = null, int score = 0)
+        public Circle(Point position = null, int score = 1)
         {
             Position = position ?? new Point();
             Score = score;

@@ -1,17 +1,14 @@
-﻿using System.Net.Sockets;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using SocketLibrary;
 
 namespace BallsIoServer
 {
     public class Broadcaster
     {
-        private readonly List<Socket> Clients = new List<Socket>();
+        private readonly List<ConnectedSocket> Clients = new List<ConnectedSocket>();
 
-        public void AddClient(Socket socket) =>
-            Clients.Add(socket);
+        public void AddClient(ConnectedSocket socket) => Clients.Add(socket);
 
-        public void SendMessage(string message) =>
-            Clients.ForEach(x => x.Send(Encoding.ASCII.GetBytes(message)));
+        public void SendMessage(string message) => Clients.ForEach(x => x.Send(message));
     }
 }

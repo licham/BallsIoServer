@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Sockets;
+using SocketLibrary;
 
 namespace BallsIoServer
 {
@@ -23,11 +23,15 @@ namespace BallsIoServer
             });
         }
 
-        public void AddPlayer(Player player, Socket playerSocket)
+        public void AddPlayer(Player player, ConnectedSocket playerSocket)
         {
             Task.Factory.StartNew(() =>
             {
                 _mutex.WaitOne();
+                var random = new System.Random(System.DateTime.Now.Millisecond);
+                var x = random.Next((int)_gameState.FieldSize.X);
+                var y = random.Next((int)_gameState.FieldSize.Y);
+                player.Circles.Add(new Circle(new Point(x, y)));
                 _gameState.Players.Add(player);
                 _broadcaster.AddClient(playerSocket);
                 _mutex.ReleaseMutex();

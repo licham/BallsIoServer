@@ -33,7 +33,7 @@ namespace BallsIoServer
                 var y = random.Next((int)_gameState.FieldSize.Y);
                 player.Circles.Add(new Circle(new Point(x, y)));
                 _gameState.Players.Add(player);
-                _broadcaster.AddClient(playerSocket);
+                _broadcaster.Clients.Add(playerSocket);
                 _mutex.ReleaseMutex();
             });            
         }

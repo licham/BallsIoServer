@@ -10,6 +10,7 @@ namespace BallsIoServer
 
         public App()
         {
+            _sessions.Add(new Session(new Point(1000, 1000)));
             _listener.ClientAdded += (socket, message) =>
                 _sessions.First().AddPlayer(new Player(socket), socket);
         }

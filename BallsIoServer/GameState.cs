@@ -20,6 +20,9 @@ namespace BallsIoServer
             GenerateFeeds();
         }
 
+        public override string ToString() =>
+            "FieldSize:\n" + FieldSize.ToString() + "\nFeeds:\n" + _feeds.ToString() + "\nPlayers:\n" + Players.ToString();
+
         public void UpdateState()
         {
             Players.ForEach(player =>

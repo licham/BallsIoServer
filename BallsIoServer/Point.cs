@@ -10,7 +10,9 @@
         {
             X = x;
             Y = y;
-        }        
+        }
+
+        public override string ToString() => X.ToString() + " " + Y.ToString();
 
         public double Length() => System.Math.Sqrt(X * X + Y * Y);
 

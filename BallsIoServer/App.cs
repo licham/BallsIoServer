@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SocketLibrary;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace BallsIoServer
 {
@@ -10,9 +12,18 @@ namespace BallsIoServer
 
         public App()
         {
-            _sessions.Add(new Session(new Point(1000, 1000)));
-            _listener.ClientAdded += (socket, message) =>
-                _sessions.First().AddPlayer(new Player(socket), socket);
+            _sessions.Add(new Session(new Point(10000, 10000)));
+            _listener.ClientAdded += ProcessNewClient;
+            while (true)
+            {
+                _sessions.ForEach(session => {
+                    session.UpdateSession();
+                    Thread.Sleep(100);
+                });
+            }
         }
+
+        public void ProcessNewClient(ConnectedSocket socket, string message) =>
+            _sessions.First().AddPlayer(new Player(socket), socket);
     }
 }

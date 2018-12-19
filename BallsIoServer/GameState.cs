@@ -53,11 +53,7 @@ namespace BallsIoServer
 
         private void ProcessConcatenation(Circle one, Circle other)
         {
-            Point direction = (other.Position - one.Position).Normalize();
-            Point firstPoint = one.Position + direction * one.Score;
-            Point secondPoint = other.Position + direction * other.Score;
-            Point thirdPoint = firstPoint - other.Position;
-            if (thirdPoint.Length() > secondPoint.Length())
+            if (one.ContainsOtherCircle(other))
             {
                 one.Score += other.Score;
                 other.Score = 0;

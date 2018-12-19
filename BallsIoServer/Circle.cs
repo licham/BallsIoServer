@@ -11,5 +11,14 @@
             Position = position ?? new Point();
             Score = score;
         }
+
+        public bool ContainsOtherCircle(Circle other)
+        {
+            Point direction = (other.Position - Position).Normalize();
+            Point firstPoint = Position + direction * Score;
+            Point secondPoint = other.Position + direction * other.Score;
+            Point thirdPoint = firstPoint - other.Position;
+            return thirdPoint.Length() > secondPoint.Length();
+        }
     }
 }
